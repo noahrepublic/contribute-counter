@@ -13,39 +13,42 @@ let commitCount = 0
 githubClient.rest.repos.listForUser({
     username: "noahrepublic"
 }).then((response) => {
+    const promises = [];
+
     for (let i = 0; i < response.data.length; i++) {
-        const repo = response.data[i]
+        const repo = response.data[i];
         
-        console.log(`Getting contributors for ${repo.name}`)
-        githubClient.rest.repos.listContributors({
+        console.log(`Getting contributors for ${repo.name}`);
+        const promise = githubClient.rest.repos.listContributors({
             owner: "noahrepublic",
             repo: response.data[i].name
         }).then((response) => {
-           for (let j = 0; j < response.data.length; j++) {
-               const contributor = response.data[j]
+            for (let j = 0; j < response.data.length; j++) {
+                const contributor = response.data[j];
 
-               console.log(contributor.login + " " + contributor.contributions + " commits to " + repo.name)
+                console.log(contributor.login + " " + contributor.contributions + " commits to " + repo.name);
 
-            console.log(contributor.login == "noahrepublic")
+                console.log(contributor.login == "noahrepublic");
 
-               if (contributor.login == "noahrepublic") {
-                commitCount += contributor.contributions
-               }
-           }
-        })
-        
+                if (contributor.login == "noahrepublic") {
+                    commitCount += contributor.contributions;
+                }
+            }
+        });
+
+        promises.push(promise);
     }
 
-    
-console.log(commitCount, typeof commitCount)
-if (typeof commitCount === 'number') {
-    console.log('Writing commit count to file')
-    fs.writeFile("commit-count.txt", commitCount.toString(), (err) => {
-        if (err) {
-            console.log(err)
+    Promise.all(promises).then(() => {
+        console.log(commitCount, typeof commitCount);
+        if (typeof commitCount === 'number') {
+            console.log('Writing commit count to file');
+            fs.writeFile("commit-count.txt", commitCount.toString(), (err) => {
+                if (err) {
+                    console.log(err);
+                }
+            });
         }
-    })
-}
-
-})
+    });
+});
 
