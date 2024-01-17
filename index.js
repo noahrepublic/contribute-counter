@@ -33,8 +33,11 @@ githubClient.rest.repos.listForUser({
     }
 })
 
-fs.writeFile("commit-count.txt", toString(commitCount), (err) => {
-    if (err) {
-        console.log(err)
-    }
-})
+
+if (typeof value === 'number') {
+    fs.writeFile("commit-count.txt", commitCount.toString(), (err) => {
+        if (err) {
+            console.log(err)
+        }
+    })
+}
