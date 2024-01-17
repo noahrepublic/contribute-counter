@@ -1,4 +1,4 @@
-name: PROXY Updater
+name: Counter updater
 
 on:
   schedule:
