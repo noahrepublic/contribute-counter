@@ -10,7 +10,7 @@ const githubClient = new Octokit({
 
 let commitCount = 0
 
-await githubClient.rest.repos.listForUser({
+githubClient.rest.repos.listForUser({
     username: "noahrepublic"
 }).then((response) => {
     for (let i = 0; i < response.data.length; i++) {
@@ -35,9 +35,8 @@ await githubClient.rest.repos.listForUser({
         })
         
     }
-})
 
-
+    
 console.log(commitCount, typeof commitCount)
 if (typeof commitCount === 'number') {
     console.log('Writing commit count to file')
@@ -47,3 +46,6 @@ if (typeof commitCount === 'number') {
         }
     })
 }
+
+})
+
