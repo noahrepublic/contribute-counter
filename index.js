@@ -39,7 +39,7 @@ githubClient.rest.repos.listForUser({
 
 
 console.log(commitCount)
-if (typeof value === 'number') {
+if (typeof commitCount === 'number') {
     console.log('Writing commit count to file')
     fs.writeFile("commit-count.txt", commitCount.toString(), (err) => {
         if (err) {
