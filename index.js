@@ -16,6 +16,7 @@ githubClient.rest.repos.listForUser({
     for (let i = 0; i < response.data.length; i++) {
         const repo = response.data[i]
         
+        console.log(`Getting contributors for ${repo.name}`)
         githubClient.rest.repos.listContributors({
             owner: "noahrepublic",
             repo: response.data[i].name
@@ -23,11 +24,13 @@ githubClient.rest.repos.listForUser({
            for (let j = 0; j < response.data.length; j++) {
                const contributor = response.data[j]
 
-               if (contributor.login != "noahrepublic") {
-                continue
-               }
+               console.log(contributor.login + " " + contributor.contributions + " commits to " + repo.name)
 
-               commitCount += contributor.contributions
+            console.log(contributor.login == "noahrepublic")
+
+               if (contributor.login == "noahrepublic") {
+                commitCount += contributor.contributions
+               }
            }
         })
         
@@ -37,6 +40,7 @@ githubClient.rest.repos.listForUser({
 
 console.log(commitCount)
 if (typeof value === 'number') {
+    console.log('Writing commit count to file')
     fs.writeFile("commit-count.txt", commitCount.toString(), (err) => {
         if (err) {
             console.log(err)
