@@ -26,6 +26,7 @@ githubClient.rest.repos.listForUser({
                if (contributor.login != "noahrepublic") {
                 continue
                }
+
                commitCount += contributor.contributions
            }
         })
