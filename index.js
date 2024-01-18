@@ -1,54 +1,26 @@
-const { Octokit } = require("@octokit/rest");
+const axios = require('axios');
+
 
 const fs = require("fs");
 
-const githubClient = new Octokit({
-    userAgent: "commit-counter",   
-})
 
 // we need to also use .get on each takes owner, and repo
 
-let commitCount = 0
+let totalContributes = 0;
 
-githubClient.rest.repos.listForUser({
-    username: "noahrepublic"
-}).then((response) => {
-    const promises = [];
 
-    for (let i = 0; i < response.data.length; i++) {
-        const repo = response.data[i];
-        
-        console.log(`Getting contributors for ${repo.name}`);
-        const promise = githubClient.rest.repos.listContributors({
-            owner: "noahrepublic",
-            repo: response.data[i].name
-        }).then((response) => {
-            for (let j = 0; j < response.data.length; j++) {
-                const contributor = response.data[j];
+axios.get('https://streak-stats.demolab.com?user=noahrepublic').then((response) => {
+    const result = response.data.match(/<text[^>]*>\s*(.+)\s*<\/text>/)[0].split('>')[1].split('<')[0].replace(',', '');
+      
+    totalContributes = parseInt(result);
 
-                console.log(contributor.login + " " + contributor.contributions + " commits to " + repo.name);
-
-                console.log(contributor.login == "noahrepublic");
-
-                if (contributor.login == "noahrepublic") {
-                    commitCount += contributor.contributions;
-                }
+    if (typeof totalContributes === 'number') {
+        fs.writeFile("data.txt", totalContributes.toString(), (err) => {
+            if (err) {
+                console.log(err);
             }
         });
-
-        promises.push(promise);
     }
-
-    Promise.all(promises).then(() => {
-        console.log(commitCount, typeof commitCount);
-        if (typeof commitCount === 'number') {
-            console.log('Writing commit count to file');
-            fs.writeFile("commit-count.txt", commitCount.toString(), (err) => {
-                if (err) {
-                    console.log(err);
-                }
-            });
-        }
-    });
 });
+
 
