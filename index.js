@@ -15,7 +15,7 @@ axios.get('https://streak-stats.demolab.com?user=noahrepublic').then((response) 
     totalContributes = parseInt(result);
 
     if (typeof totalContributes === 'number') {
-        fs.writeFile("data.txt", totalContributes.toString(), (err) => {
+        fs.writeFile("contributions.txt", totalContributes.toString(), (err) => {
             if (err) {
                 console.log(err);
             }
