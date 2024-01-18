@@ -2,7 +2,7 @@ name: Counter updater
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 */6 * * *"
   workflow_dispatch:
   
 jobs:
@@ -22,7 +22,7 @@ jobs:
       run: |
         git config --local user.email ${{ secrets.GIT_EMAIL }}
         git config --local user.name ${{ secrets.GIT_NAME }}
-        git add contributions.txt
+        git add commit-count.txt
         git commit -m "Updated counter"
     - name: Push changes
       uses: ad-m/github-push-action@master
