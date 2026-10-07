@@ -4,33 +4,31 @@ on:
   schedule:
     - cron: "0 13 * * 1"
   workflow_dispatch:
-  
-  
+
 permissions:
   contents: write
 
 jobs:
-  build:
+  update:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v5
+    - uses: actions/setup-node@v5
       with:
-        node-version: 20
-        cache: 'npm'
-    - name: Install dependencies
+        node-version: 22
+    - name: Count contributions and lines
+      run: node index.js
+      env:
+        # Personal access token so private and org repos are counted.
+        # Without it, only public repos are counted.
+        COUNTER_TOKEN: ${{ secrets.COUNTER_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Commit and push
+      if: always()
       run: |
-        npm install
-    - run: node index.js
-    - name: Commit files
-      run: |
-        git config --local user.email 'github-actions[bot]'
-        git config --local user.name 'github-actions[bot]@users.noreply.github.com'
-        git add contributions.txt
-        git add linesWrote.txt
-        git commit -m "Updated counter"
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-      
+        git config user.name 'github-actions[bot]'
+        git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+        git add contributions.txt linesWrote.txt updated.txt
+        git diff --cached --quiet || git commit -m "Updated counter"
+        git push
